@@ -77,7 +77,6 @@ public extension SolidityNonPayableInvocation {
                 maxPriorityFeePerGas: maxPriorityFeePerGas,
                 gasLimit: gasLimit,
                 from: from,
-                value: value,
                 accessList: accessList,
                 transactionType: transactionType,
                 completion: seal.resolve

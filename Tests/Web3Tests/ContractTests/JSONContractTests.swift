@@ -146,7 +146,6 @@ class DynamicContractTests: QuickSpec {
                             maxPriorityFeePerGas: nil,
                             gasLimit: 12000,
                             from: .testAddress,
-                            value: nil,
                             accessList: [:],
                             transactionType: .legacy
                         ) else {
