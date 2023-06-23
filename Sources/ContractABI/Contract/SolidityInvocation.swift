@@ -177,7 +177,6 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         gasLimit: EthereumQuantity? = nil,
         from: EthereumAddress? = nil,
-        value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
         transactionType: EthereumTransaction.TransactionType = .legacy
     ) -> EthereumTransaction? {
@@ -192,7 +191,7 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
             gasLimit: gasLimit,
             from: from,
             to: to,
-            value: value,
+            value: nil,
             data: data,
             accessList: accessList,
             transactionType: transactionType
@@ -206,7 +205,6 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         maxPriorityFeePerGas: EthereumQuantity? = nil,
         gasLimit: EthereumQuantity? = nil,
         from: EthereumAddress,
-        value: EthereumQuantity? = nil,
         accessList: OrderedDictionary<EthereumAddress, [EthereumData]> = [:],
         transactionType: EthereumTransaction.TransactionType = .legacy,
         completion: @escaping (EthereumData?, Error?) -> Void
@@ -222,7 +220,6 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
             maxPriorityFeePerGas: maxPriorityFeePerGas,
             gasLimit: gasLimit,
             from: from,
-            value: value,
             accessList: accessList,
             transactionType: transactionType
         ) else {
