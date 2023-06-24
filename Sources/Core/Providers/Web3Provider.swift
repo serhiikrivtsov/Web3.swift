@@ -148,3 +148,21 @@ extension Web3Response.Status: CustomDebugStringConvertible {
         }
     }
 }
+
+public extension Web3Response.Status {
+    func asResult() -> Swift.Result<Result, Swift.Error> {
+        switch self {
+        case .success(let value):
+            return .success(value)
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+}
+
+
+public extension Swift.Result where Success: Codable, Failure == any Error {
+    init(status: Web3Response<Success>.Status<Success> ) {
+        self = status.asResult()
+    }
+}

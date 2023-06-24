@@ -163,21 +163,3 @@ extension EthereumContract {
         }
     }
 }
-
-extension Web3Response.Status {
-    func asResult() -> Swift.Result<Result, Swift.Error> {
-        switch self {
-        case .success(let value):
-            return .success(value)
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-}
-
-
-extension Swift.Result where Success: Codable, Failure == any Error {
-    init(status: Web3Response<Success>.Status<Success> ) {
-        self = status.asResult()
-    }
-}
