@@ -124,15 +124,17 @@ public struct SolidityPayableInvocation: SolidityInvocation {
         completion: @escaping (Result<EthereumData, Error>) -> Void
     ) {
         do {
-            let transaction = try createTransaction(nonce: nonce,
-                                                    gasPrice: gasPrice,
-                                                    maxFeePerGas: maxFeePerGas,
-                                                    maxPriorityFeePerGas: maxPriorityFeePerGas,
-                                                    gasLimit: gasLimit,
-                                                    from: from,
-                                                    value: value,
-                                                    accessList: accessList,
-                                                    transactionType: transactionType)
+            let transaction = try createTransaction(
+                nonce: nonce,
+                gasPrice: gasPrice,
+                maxFeePerGas: maxFeePerGas,
+                maxPriorityFeePerGas: maxPriorityFeePerGas,
+                gasLimit: gasLimit,
+                from: from,
+                value: value,
+                accessList: accessList,
+                transactionType: transactionType
+            )
             handler.send(transaction, completion: completion)
         } catch {
             completion(.failure(error))
@@ -196,14 +198,16 @@ public struct SolidityNonPayableInvocation: SolidityInvocation {
         completion: @escaping (Result<EthereumData, Error>) -> Void
     ) {
         do {
-            let transaction = try createTransaction(nonce: nonce,
-                                                    gasPrice: gasPrice,
-                                                    maxFeePerGas: maxFeePerGas,
-                                                    maxPriorityFeePerGas: maxPriorityFeePerGas,
-                                                    gasLimit: gasLimit,
-                                                    from: from,
-                                                    accessList: accessList,
-                                                    transactionType: transactionType)
+            let transaction = try createTransaction(
+                nonce: nonce,
+                gasPrice: gasPrice,
+                maxFeePerGas: maxFeePerGas,
+                maxPriorityFeePerGas: maxPriorityFeePerGas,
+                gasLimit: gasLimit,
+                from: from,
+                accessList: accessList,
+                transactionType: transactionType
+            )
             handler.send(transaction, completion: completion)
         } catch {
             completion(.failure(error))
