@@ -64,7 +64,7 @@ class DynamicContractTests: QuickSpec {
                         }
 
                         it("should be able to create a valid transaction") {
-                            let transaction = invocation.createTransaction(gasPrice: 0, gasLimit: 0, from: .testAddress)
+                            let transaction = try? invocation.createTransaction(gasPrice: 0, gasLimit: 0, from: .testAddress)
                             let generatedHexString = transaction?.data.hex()
                             expect(generatedHexString).notTo(beNil())
                         }
@@ -72,9 +72,8 @@ class DynamicContractTests: QuickSpec {
                         it("should deploy") {
                             let expectedHash = try? EthereumData(ethereumValue: "0x0e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331")
                             waitUntil { done in
-                                invocation.send(gasPrice: nil, gasLimit: 15000, from: .testAddress) { (hash, error) in
-                                    expect(error).to(beNil())
-                                    expect(hash).to(equal(expectedHash))
+                                invocation.send(gasPrice: nil, gasLimit: 15000, from: .testAddress) { result in
+                                    expect(try? result.get()).to(equal(expectedHash))
                                     done()
                                 }
                             }
@@ -92,8 +91,8 @@ class DynamicContractTests: QuickSpec {
                                     value: EthereumQuantity(quantity: 1.eth),
                                     accessList: [:],
                                     transactionType: .legacy
-                                ) { (hash, error) in
-                                    expect(error as? InvocationError).to(equal(.invalidInvocation))
+                                ) { result in
+                                    expect(result.error as? InvocationError).to(equal(.invalidInvocation))
                                     done()
                                 }
                             }
@@ -107,19 +106,19 @@ class DynamicContractTests: QuickSpec {
 
                     it("should be able to call constant method") {
                         waitUntil { done in
-                            contract["balanceOf"]?(EthereumAddress.testAddress).call() { response, error in
-                                if let response = response, let balance = response["_balance"] as? BigUInt {
+                            contract["balanceOf"]?(EthereumAddress.testAddress).call() { result in
+                                if let value = result.value, let balance = value["_balance"] as? BigUInt{
                                     expect(balance).to(equal(1))
                                     done()
                                 } else {
-                                    fail(error?.localizedDescription ?? "Empty response")
+                                    fail(result.error?.localizedDescription ?? "Empty response")
                                 }
                             }
                         }
                     }
 
                     it("should be able to create an EthereumCall") {
-                        guard let call = contract["balanceOf"]?(EthereumAddress.testAddress).createCall() else {
+                        guard let call = try? contract["balanceOf"]?(EthereumAddress.testAddress).createCall() else {
                             fail("Could not generate call")
                             return
                         }
@@ -139,7 +138,7 @@ class DynamicContractTests: QuickSpec {
                 describe("Sends") {
 
                     it("should be able to send non-payable method") {
-                        guard let transaction = contract["transfer", SolidityNonPayableFunction.self]?(EthereumAddress.testAddress, BigUInt(1)).createTransaction(
+                        guard let transaction = try? contract["transfer", SolidityNonPayableFunction.self]?(EthereumAddress.testAddress, BigUInt(1)).createTransaction(
                             nonce: 0,
                             gasPrice: nil,
                             maxFeePerGas: nil,
@@ -546,5 +545,18 @@ class DynamicContractTests: QuickSpec {
             }
         }
 
+    }
+}
+
+
+extension Swift.Result {
+    var value: Success? {
+        guard case let .success(value) = self else { return nil }
+        return value
+    }
+    
+    var error: Failure? {
+        guard case let .failure(error) = self else { return nil }
+        return error
     }
 }
